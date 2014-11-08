@@ -17,13 +17,13 @@
 
 
 import sys
-from PyQt4 import QtGui, QtCore, uic
-import ConfigParser
+from PyQt5 import QtWidgets, QtCore, uic
+import configparser
 import logging
 
 import transfusion
 
-class PlasmaTransfusionGUI(QtGui.QMainWindow):
+class PlasmaTransfusionGUI(QtWidgets.QMainWindow):
 
     def __init__(self, parent=None):
         super(PlasmaTransfusionGUI, self).__init__(parent)
@@ -40,14 +40,14 @@ class PlasmaTransfusionGUI(QtGui.QMainWindow):
          self.btnConvertAge.clicked.connect(self.convertAge)
 
     def fillComboBoxVersions(self):
-        userVersionNames = transfusion.versionNames.values()
+        userVersionNames = list(transfusion.versionNames.values())
         userVersionNames.remove("Unknown")
         self.cbVersion.clear()
         self.cbVersion.addItems(list(userVersionNames))
 
     def openAgeFile(self):
-         ageFileName = str(QtGui.QFileDialog.getOpenFileName(self, "Open Age File", "","Age Files(*.age)"))
-         inputDir = ageFileName.rpartition("/")[0]
+         ageFileName = QtWidgets.QFileDialog.getOpenFileName(self, "Open Age File", "","Age Files(*.age)")[0]
+         print(ageFileName)         inputDir = ageFileName.rpartition("/")[0]
          if ageFileName:
            self.txtInputDir.setText(inputDir)
 
@@ -57,7 +57,7 @@ class PlasmaTransfusionGUI(QtGui.QMainWindow):
 
 
     def setOutputPath(self):
-         outputDirectory = str(QtGui.QFileDialog.getExistingDirectory(self,"Open Directory"))
+         outputDirectory = str(QtWidgets.QFileDialog.getExistingDirectory(self,"Open Directory"))
          if outputDirectory:
             self.txtOutputDir.setText(outputDirectory)
 
@@ -67,6 +67,8 @@ class PlasmaTransfusionGUI(QtGui.QMainWindow):
          oldAgeName = str(self.txtOldAgeName.text())
          outputDir = str(self.txtOutputDir.text())
          newAgeName = str(self.txtNewAgeName.text())
+         print(inputDir)
+         print(oldAgeName)
          try:
              newSequencePrefix = int(self.txtNewSequencePrefix.text())
          except:
@@ -84,7 +86,7 @@ class PlasmaTransfusionGUI(QtGui.QMainWindow):
         return None
 
     def saveSettings(self):
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.set('DEFAULT','inputDir',self.txtInputDir.text())
         config.set('DEFAULT','oldAgeName',self.txtOldAgeName.text())
         config.set('DEFAULT','outputDir',self.txtOutputDir.text())
@@ -96,7 +98,7 @@ class PlasmaTransfusionGUI(QtGui.QMainWindow):
             config.write(configfile)
 
     def readSettings(self):
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         if len(config.read("lastsession.cfg")) > 0:
             self.txtInputDir.setText(config.get('DEFAULT','inputDir'))
             self.txtOldAgeName.setText(config.get('DEFAULT','oldAgeName'))
@@ -110,7 +112,7 @@ class PlasmaTransfusionGUI(QtGui.QMainWindow):
         self.show()
 
 if __name__=='__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     plasmaTransfusionGUI = PlasmaTransfusionGUI()
     plasmaTransfusionGUI.main()
     app.exec_()
